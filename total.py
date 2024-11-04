@@ -377,7 +377,7 @@ logging.info("This is an info message.")
 
 choices = ["A", "B", "C", "D", "E", "yes", "no", "maybe"]
 
-file_path = '/home/gy237/project/light_weight_llama/data_11'
+file_path = '/home/gy237/project/light_weight_llama/data_12'
 files = os.listdir(file_path)
 files = [i for i in files if i.endswith('.jsonl')]
 files = sorted(files)
