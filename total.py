@@ -313,7 +313,7 @@ def compute_f1_scores(predictions, true_labels):
 # In[9]:
 
 
-def magic(file, preds):
+def magic(file, preds, error, data):
     cho_medmc = ["A", "B", "C", "D"]
     cho_med = ["A", "B", "C", "D", "E"]
     cho_pubmed = ["maybe", "no", "yes"]
@@ -358,7 +358,7 @@ def magic(file, preds):
     print(file, ':')
     print(dic)
 
-    return preds, dic
+    return preds, dic, error
     
 
 
@@ -375,54 +375,55 @@ logging.basicConfig(filename="/home/gy237/project/light_weight_llama/output.log"
 # 使用logging.info()写入日志
 logging.info("This is an info message.")
 
-choices = ["A", "B", "C", "D", "E", "yes", "no", "maybe"]
+
+def test(file_path):
+    choices = ["A", "B", "C", "D", "E", "yes", "no", "maybe"]
+
+    files = os.listdir(file_path)
+    files = [i for i in files if i.endswith('.jsonl')]
+    files = sorted(files)
+    print(len(files))
+
+    results = []
+    error = []
+    for file in files:
+        file = f'{file_path}/{file}'
+        error.append(file)
+
+        preds, golds, data = process_jsonl_format(file)
+        preds, dic, error = magic(file, preds, error, data)
+
+        golds_e = [i for i in golds if i not in choices]
+        assert len(golds_e) == 0
+        # assert len(preds) in [4183, 500, 1273]
+        
+        accuracy = compute_accuracy_scores(preds, golds)
+        f1_scores = compute_f1_scores(preds, golds)
+        
+        results.append({
+                    'file': file,
+                    'accuracy': accuracy,
+                    'f1_scores': f1_scores,
+                    'labe_dic': dic,
+                })
+
+
+    print(len(error))
+
+
+    # In[ ]:
+
+
+    import json
+    with open(f'{file_path}/results.json', mode='w', encoding='utf-8') as file:
+        json.dump(results, file, ensure_ascii=False, indent=4)
+
+    with open(f'{file_path}/rerror.json', mode='w', encoding='utf-8') as file:
+        json.dump(error, file, ensure_ascii=False, indent=4)
+
+
+# In[ ]:
 
 file_path = '/home/gy237/project/light_weight_llama/data_12'
-files = os.listdir(file_path)
-files = [i for i in files if i.endswith('.jsonl')]
-files = sorted(files)
-print(len(files))
-
-results = []
-error = []
-for file in files:
-    file = f'{file_path}/{file}'
-    error.append(file)
-
-    preds, golds, data = process_jsonl_format(file)
-    preds, dic = magic(file, preds)
-
-    golds_e = [i for i in golds if i not in choices]
-    assert len(golds_e) == 0
-    # assert len(preds) in [4183, 500, 1273]
-    
-    accuracy = compute_accuracy_scores(preds, golds)
-    f1_scores = compute_f1_scores(preds, golds)
-    
-    results.append({
-                'file': file,
-                'accuracy': accuracy,
-                'f1_scores': f1_scores,
-                'labe_dic': dic,
-            })
-
-
-print(len(error))
-
-
-# In[ ]:
-
-
-import json
-with open(f'{file_path}/results.json', mode='w', encoding='utf-8') as file:
-    json.dump(results, file, ensure_ascii=False, indent=4)
-
-with open(f'{file_path}/rerror.json', mode='w', encoding='utf-8') as file:
-    json.dump(error, file, ensure_ascii=False, indent=4)
-
-
-# In[ ]:
-
-
-
-
+test(file_path)
+# 输入file_path，自动评估file_path中的所有jsonl文件，将结果汇总到file_path中
