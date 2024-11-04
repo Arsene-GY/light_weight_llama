@@ -2,7 +2,7 @@
 *.jsonl
 *.csv
 data
-/data*
+/*data*
 *.*
 !*.py
 !*.ipynb
