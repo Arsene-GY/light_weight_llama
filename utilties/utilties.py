@@ -371,7 +371,7 @@ import os
 import logging
 
 # 配置logging模块，将日志输出到output.log文件
-logging.basicConfig(filename="/home/gy237/project/light_weight_llama/output.log", filemode="w", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(filename="./output.log", filemode="w", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 # 使用logging.info()写入日志
 logging.info("This is an info message.")
 
@@ -424,6 +424,15 @@ def test(file_path):
 
 # In[ ]:
 
-file_path = '/home/gy237/project/light_weight_llama/data_12'
-test(file_path)
+if __name__ == "__main__":
+    file_path = './data_12'
+    test(file_path)
 # 输入file_path，自动评估file_path中的所有jsonl文件，将结果汇总到file_path中
+
+
+# import sys
+# sys.path.append('./utilties')
+# from utilties import test
+
+# file_path = './data_12'
+# test(file_path)
