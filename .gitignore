@@ -1,0 +1,9 @@
+*.json
+*.jsonl
+*.csv
+data
+/data*
+*.*
+!*.py
+!*.ipynb
+!*.git*
