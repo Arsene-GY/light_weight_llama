@@ -5,9 +5,10 @@ import torch
 from transformers import TextStreamer, AutoModel, AutoTokenizer, AutoModelForCausalLM
 import pandas as pd
 from datasets import load_dataset
+from tqdm import tqdm
 
 
-def generate(model_name, prompt, question):
+def generate(model_name, prompt, question, model, tokenizer):
     messages = [
         {"role": "system", "content": prompt},
         {"role": "user", "content": question}
@@ -31,7 +32,7 @@ def generate(model_name, prompt, question):
     return answer
 
 
-def process(model_name, dataset):
+def process(model_name, dataset, model, tokenizer):
     model_name_splited = model_name.split('/')[1]
     ds = load_dataset(dataset, cache_dir='.cache')
     data_query = ds['test']
@@ -39,11 +40,12 @@ def process(model_name, dataset):
     # exit()
 
     answer_json = []
-    for index in range(len(data_query)):
+    for index in tqdm(range(len(data_query)), ncols=100):
         current_answer = {}
         prompt = data_query[index]["query"].split('\n')[0]
         querry = '\n'.join(data_query[index]["query"].split('\n')[1:])
-        prediction = generate(model_name, prompt, querry)
+
+        prediction = generate(model_name, prompt, querry, model, tokenizer)
 
         # 转换成目标格式
         current_answer["doc_id"] = data_query[index]["id"]
@@ -84,4 +86,4 @@ if __name__ == "__main__":
 
         for dataset_name in dataset_list:
             dataset = dataset_dict[dataset_name]
-            process(model_name, dataset)
+            process(model_name, dataset, model, tokenizer)
