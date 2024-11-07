@@ -64,7 +64,6 @@ def process(model_name, dataset, model, tokenizer):
 
 if __name__ == "__main__":
     model_list = [
-        "Qwen/Qwen2.5-3B-Instruct",
         "Qwen/Qwen2.5-0.5B-Instruct",
         "Qwen/Qwen2.5-1.5B-Instruct",
         "Qwen/Qwen2.5-3B-Instruct",
