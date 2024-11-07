@@ -10,9 +10,6 @@ from openai import OpenAI
 def generate(model_name, prompt, question):
     # return 'Y'    # use, when you check the diagnoses list
     client = OpenAI()
-    
-    prompt ="""Your task is to identify whether the provided predicted differential diagnosis is correct based on the true diagnosis. Carefully review the information and determine the correctness of the prediction. Please notice same diagnosis might be in different words. Only return "Y" for yes or "N" for no, without any other words."""
-    
     chat_return = client.chat.completions.create(model=model_name,temperature=0.0, messages=[{"role": "system", "content": prompt}, {"role":"user","content": question}])
 
     result = chat_return.choices[0].message.content
@@ -50,9 +47,9 @@ def process(model_name, dataset):
 
 
 if __name__ == "__main__":
-    # model_list = ['gpt-4o-2024-08-06']
+    model_list = ['gpt-4o-2024-08-06']
     # model_list = ['gpt-4-turbo-2024-04-09']
-    model_list = ['gpt-3.5-turbo-0125']
+    # model_list = ['gpt-3.5-turbo-0125']
 
     dataset_list = ["MedMCQA", "MedQA", "PubMedQA"]
     dataset_dict = {'PubMedQA': "clinicalnlplab/pubmedqa_test",

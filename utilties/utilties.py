@@ -271,18 +271,18 @@ def process_jsonl_format(f):
     data_list = []
     for i in range(len(data)):
         if 'MedMCQA' in f:
-            answer = data[i]['doc']['query'].split('Options:')[1].split('The answer is')[0].strip()
+            answer = data[i]['prompt_0'].split('Options:')[1].split('The answer is')[0].strip()
             answer = answer.split('\n')
             pred = extract_correct_option_medmcqa(data[i]['target'], answer)
-            gold = extract_correct_option_medmcqa(data[i]['resps'][0][0], answer)
+            gold = extract_correct_option_medmcqa(data[i]['resps'], answer)
         elif 'PubMedQA' in f:
             pred = extract_correct_option_pubmedqa(data[i]['target'])
-            gold = extract_correct_option_pubmedqa(data[i]['resps'][0][0])
+            gold = extract_correct_option_pubmedqa(data[i]['resps'])
         elif 'MedQA' in f:
-            answer = data[i]['doc']['query'].split('Options:')[1].split('The answer is')[0].strip()
+            answer = data[i]['prompt_0'].split('Options:')[1].split('The answer is')[0].strip()
             answer = answer.split('\n')
             pred = extract_correct_option_medqa(data[i]['target'], answer)
-            gold = extract_correct_option_medqa(data[i]['resps'][0][0], answer)
+            gold = extract_correct_option_medqa(data[i]['resps'], answer)
         else:
             print('Error Foramt')
 
@@ -425,7 +425,7 @@ def test(file_path):
 # In[ ]:
 
 if __name__ == "__main__":
-    file_path = './data_12'
+    file_path = './GPT'
     test(file_path)
 # 输入file_path，自动评估file_path中的所有jsonl文件，将结果汇总到file_path中
 
