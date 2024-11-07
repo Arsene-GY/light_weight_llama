@@ -47,9 +47,9 @@ def process(model_name, dataset):
 
 
 if __name__ == "__main__":
-    model_list = ['gpt-4o-2024-08-06']
+    # model_list = ['gpt-4o-2024-08-06']
     # model_list = ['gpt-4-turbo-2024-04-09']
-    # model_list = ['gpt-3.5-turbo-0125']
+    model_list = ['gpt-3.5-turbo-0125']
 
     dataset_list = ["MedMCQA", "MedQA", "PubMedQA"]
     dataset_dict = {'PubMedQA': "clinicalnlplab/pubmedqa_test",
@@ -57,6 +57,8 @@ if __name__ == "__main__":
                     "MedQA": "clinicalnlplab/medQA_test"}
     
     for model_name in model_list:
+        print(model_name)
         for dataset_name in dataset_list:
+            print(dataset_name)
             dataset = dataset_dict[dataset_name]
             process(model_name, dataset)
