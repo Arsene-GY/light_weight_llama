@@ -8,14 +8,6 @@ from datasets import load_dataset
 
 
 def generate(model_name, prompt, question):
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype="auto",
-        device_map="auto",
-        cache_dir='.cache'
-    )
-    tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir='.cache')
-
     messages = [
         {"role": "system", "content": prompt},
         {"role": "user", "content": question}
@@ -82,6 +74,14 @@ if __name__ == "__main__":
                     "MedQA": "clinicalnlplab/medQA_test"}
     
     for model_name in model_list:
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype="auto",
+            device_map="auto",
+            cache_dir='.cache'
+        )
+        tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir='.cache')
+
         for dataset_name in dataset_list:
             dataset = dataset_dict[dataset_name]
             process(model_name, dataset)
