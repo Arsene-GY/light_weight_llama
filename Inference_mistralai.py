@@ -1,23 +1,31 @@
 import os
 import re
 import json
+import torch
+from transformers import TextStreamer, AutoModel, AutoTokenizer, AutoModelForCausalLM
 import pandas as pd
 from datasets import load_dataset
 from tqdm import tqdm
-from openai import OpenAI
+from vllm import LLM
+from vllm.sampling_params import SamplingParams
 
 
-def generate(model_name, prompt, question):
-    # return 'Y'    # use, when you check the diagnoses list
-    client = OpenAI()
-    chat_return = client.chat.completions.create(model=model_name,temperature=0.0, messages=[{"role": "system", "content": prompt}, {"role":"user","content": question}])
+def generate(model_name, prompt, question, llm):
+    return "yes"
+    messages = [
+        {
+            "role": "user",
+            "content": prompt+question
+        },
+    ]
 
-    result = chat_return.choices[0].message.content
-    return result
+    outputs = llm.chat(messages, sampling_params=sampling_params)
+
+    return outputs
 
 
-def process(model_name, dataset):
-    model_name_splited = model_name
+def process(model_name, dataset, llm):
+    model_name_splited = model_name.split('/')[1]
     ds = load_dataset(dataset, cache_dir='.cache')
     data_query = ds['test']
     # print(data_query[0])
@@ -29,7 +37,7 @@ def process(model_name, dataset):
         prompt = data_query[index]["query"].split('\n')[0]
         querry = '\n'.join(data_query[index]["query"].split('\n')[1:])
 
-        prediction = generate(model_name, prompt, querry)
+        prediction = generate(model_name, prompt, querry, llm)
 
         # 转换成目标格式
         current_answer["doc_id"] = data_query[index]["id"]
@@ -40,25 +48,28 @@ def process(model_name, dataset):
         # print(current_answer)
         # exit()
 
-    with open(f'./GPT/{model_name_splited}_{dataset_name}.jsonl', "w+") as fout:
+    with open(f'./others/{model_name_splited}_{dataset_name}.jsonl', "w+") as fout:
         for item in answer_json:
             fout.write(json.dumps(item)+"\n")
     
 
 
 if __name__ == "__main__":
-    # model_list = ['gpt-4o-2024-08-06']
-    model_list = ['gpt-4-turbo-2024-04-09']
-    # model_list = ['gpt-3.5-turbo-0125']
+    model_list = [
+        "mistralai/Ministral-8B-Instruct-2410",
+    ]
 
-    dataset_list = ["MedMCQA"]
+    dataset_list = ["MedMCQA", "PubMedQA", "MedQA"]
     dataset_dict = {'PubMedQA': "clinicalnlplab/pubmedqa_test",
                     "MedMCQA": "clinicalnlplab/medMCQA_test",
                     "MedQA": "clinicalnlplab/medQA_test"}
     
     for model_name in model_list:
-        print(model_name)
+        sampling_params = SamplingParams(max_tokens=8192)
+        # note that running Ministral 8B on a single GPU requires 24 GB of GPU RAM
+        # If you want to divide the GPU requirement over multiple devices, please add *e.g.* `tensor_parallel=2`
+        llm = LLM(model=model_name, tokenizer_mode="mistral", config_format="mistral", load_format="mistral")
+
         for dataset_name in dataset_list:
-            print(dataset_name)
             dataset = dataset_dict[dataset_name]
-            process(model_name, dataset)
+            process(model_name, dataset, llm)
