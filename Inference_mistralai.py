@@ -8,7 +8,10 @@ from datasets import load_dataset
 from tqdm import tqdm
 from vllm import LLM
 from vllm.sampling_params import SamplingParams
+from huggingface_hub import login
 
+# 输入你的访问令牌进行登录
+login('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')
 
 def generate(model_name, prompt, question, llm):
     return "yes"

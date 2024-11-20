@@ -32,7 +32,7 @@ def generate(model_name, prompt, question, model, tokenizer):
         "do_sample": False,
     }
 
-    output = pipe(messages, **generation_args)
+    output = pipe(messages, **generation_args)[0]["generated_text"]
     return output
 
 

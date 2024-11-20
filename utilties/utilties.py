@@ -425,7 +425,7 @@ def test(file_path):
 # In[ ]:
 
 if __name__ == "__main__":
-    file_path = './GPT'
+    file_path = './others'
     test(file_path)
 # 输入file_path，自动评估file_path中的所有jsonl文件，将结果汇总到file_path中
 
