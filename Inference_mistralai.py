@@ -68,7 +68,7 @@ if __name__ == "__main__":
                     "MedQA": "clinicalnlplab/medQA_test"}
     
     for model_name in model_list:
-        sampling_params = SamplingParams(max_tokens=8192)
+        sampling_params = SamplingParams(max_tokens=5000)
         # note that running Ministral 8B on a single GPU requires 24 GB of GPU RAM
         # If you want to divide the GPU requirement over multiple devices, please add *e.g.* `tensor_parallel=2`
         llm = LLM(model=model_name, tokenizer_mode="mistral", config_format="mistral", load_format="mistral")
