@@ -14,7 +14,7 @@ from huggingface_hub import login
 login('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')
 
 def generate(model_name, prompt, question, llm):
-    return "yes"
+    # return "yes"
     messages = [
         {
             "role": "user",
@@ -23,7 +23,8 @@ def generate(model_name, prompt, question, llm):
     ]
 
     outputs = llm.chat(messages, sampling_params=sampling_params)
-
+    outputs = outputs[0].outputs[0].text
+    
     return outputs
 
 
